@@ -16,9 +16,9 @@
     "tether": "^1.1.1"
   },
   "peerDependencies": {
-    "react": "^15.0.0 || ^16.0.0",
-    "react-transition-group": "^1.1.2",
-    "react-dom": "^15.0.0 || ^16.0.0",
+    "react": ">=15.0.0",
+    "react-transition-group": "^2.9.0",
+    "react-dom": ">=15.0.0",
     "react-dom-factories": "^1.0.0"
   },
   "browserify-shim": {
@@ -37,6 +37,7 @@
     "browserify": "^14.4.0",
     "browserify-shim": "^3.8.10",
     "coveralls": "^2.11.4",
+    "create-react-class": "^15.5.2",
     "gulp": "^3.9.1",
     "gulp-connect": "^5.0.0",
     "gulp-if": "^2.0.2",
@@ -54,12 +55,12 @@
     "mocha": "^3.4.2",
     "mocha-lcov-reporter": "^1.0.0",
     "nib": "^1.1.0",
-    "react": "^16.0.0-beta.2",
-    "react-dom": "^16.0.0-beta.2",
+    "react": ">=15.0.0",
+    "react-dom": ">=15.0.0",
     "react-dom-factories": "^1.0.0",
     "react-router": "3.0.5",
     "react-tools": "^0.13.3",
-    "react-transition-group": "^1.1.2",
+    "react-transition-group": "^2.9.0",
     "run-sequence": "^2.1.0",
     "should": "^11.2.1",
     "underscore": "^1.8.3",
