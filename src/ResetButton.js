@@ -1,7 +1,8 @@
 (function(){
-  var React, createFactory, path, SvgWrapper, ResetButton;
-  React = require('react'), createFactory = React.createFactory;
-  path = require('react-dom-factories').path;
+  var createFactory, React, path, SvgWrapper, ResetButton;
+  createFactory = require('./utils').createFactory;
+  React = require('react');
+  path = createFactory('path');
   SvgWrapper = createFactory(require('./SvgWrapper'));
   module.exports = ResetButton = (function(superclass){
     var prototype = extend$((import$(ResetButton, superclass).displayName = 'ResetButton', ResetButton), superclass).prototype, constructor = ResetButton;

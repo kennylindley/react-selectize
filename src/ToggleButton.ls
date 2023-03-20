@@ -1,5 +1,6 @@
-{create-factory}:React = require \react
-{path} = require \react-dom-factories
+{create-factory} = require \./utils
+React = require \react
+path = create-factory \path
 SvgWrapper = create-factory require \./SvgWrapper
 
 module.exports = class ToggleButton extends React.PureComponent

@@ -1,4 +1,5 @@
 {filter, map, obj-to-pairs, Str} = require \prelude-ls
+{createElement} = require \react
 
 # cancel-event :: Event -> Void
 export cancel-event = (e) !->
@@ -14,3 +15,6 @@ export class-name-from-object = ->
     |> filter -> !!it.1
     |> map (.0)
     |> Str.join ' '
+
+export create-factory = (type) ->
+    createElement.bind null, type

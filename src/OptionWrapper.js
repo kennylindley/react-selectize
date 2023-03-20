@@ -1,7 +1,8 @@
 (function(){
-  var React, div, isEqualToObject, cancelEvent, OptionWrapper;
+  var React, createFactory, div, isEqualToObject, cancelEvent, OptionWrapper;
   React = require('react');
-  div = require('react-dom-factories').div;
+  createFactory = require('./utils').createFactory;
+  div = createFactory('div');
   isEqualToObject = require('prelude-extension').isEqualToObject;
   cancelEvent = require('./utils').cancelEvent;
   module.exports = OptionWrapper = (function(superclass){

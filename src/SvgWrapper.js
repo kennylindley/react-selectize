@@ -1,7 +1,8 @@
 (function(){
-  var React, svg, findDOMNode, SvgWrapper;
+  var React, createFactory, svg, findDOMNode, SvgWrapper;
   React = require('react');
-  svg = require('react-dom-factories').svg;
+  createFactory = require('./utils').createFactory;
+  svg = createFactory('svg');
   findDOMNode = require('react-dom').findDOMNode;
   module.exports = SvgWrapper = (function(superclass){
     var prototype = extend$((import$(SvgWrapper, superclass).displayName = 'SvgWrapper', SvgWrapper), superclass).prototype, constructor = SvgWrapper;

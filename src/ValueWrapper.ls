@@ -1,5 +1,6 @@
 React = require \react
-{div} = require \react-dom-factories
+{create-factory} = require \./utils
+div = create-factory \div
 {is-equal-to-object} = require \prelude-extension
 
 module.exports = class ValueWrapper extends React.Component

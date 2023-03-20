@@ -1,18 +1,23 @@
 (function(){
-  var ref$, each, objToPairs, React, createFactory, input, findDOMNode, ResizableInput;
+  var ref$, each, objToPairs, createFactory, React, createRef, input, findDOMNode, ResizableInput;
   ref$ = require('prelude-ls'), each = ref$.each, objToPairs = ref$.objToPairs;
-  React = require('react'), createFactory = React.createFactory;
-  input = require('react-dom-factories').input;
+  createFactory = require('./utils').createFactory;
+  React = require('react'), createRef = React.createRef;
+  input = createFactory('input');
   findDOMNode = require('react-dom').findDOMNode;
   module.exports = ResizableInput = (function(superclass){
     var prototype = extend$((import$(ResizableInput, superclass).displayName = 'ResizableInput', ResizableInput), superclass).prototype, constructor = ResizableInput;
+    function ResizableInput(props){
+      ResizableInput.superclass.call(this, props);
+      this.inputRef = createRef();
+    }
     ResizableInput.prototype.render = function(){
       var ref$;
-      return input((ref$ = import$({}, this.props), ref$.type = 'input', ref$.className = 'resizable-input', ref$));
+      return input((ref$ = import$({}, this.props), ref$.type = 'input', ref$.className = 'resizable-input', ref$.ref = this.inputRef, ref$));
     };
     ResizableInput.prototype.autosize = function(){
       var x$, inputElement, y$, dummpyInput, ref$;
-      x$ = inputElement = findDOMNode(this);
+      x$ = inputElement = this.inputRef.current;
       x$.style.width = '0px';
       if (inputElement.value.length === 0) {
         return inputElement.style.width = !!(inputElement != null && inputElement.currentStyle) ? '4px' : '2px';
@@ -55,9 +60,6 @@
     ResizableInput.prototype.focus = function(){
       return findDOMNode(this).focus();
     };
-    function ResizableInput(){
-      ResizableInput.superclass.apply(this, arguments);
-    }
     return ResizableInput;
   }(React.PureComponent));
   function extend$(sub, sup){

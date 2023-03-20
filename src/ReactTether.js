@@ -40,18 +40,18 @@
         this.initTether(this.props);
       }
     };
-    ReactTether.prototype.componentWillReceiveProps = function(newProps){
+    ReactTether.prototype.componentDidUpdate = function(prevProps){
       var this$ = this;
-      if (this.props.children && !newProps.children) {
+      if (prevProps.children && !this.props.children) {
         this.destroyTether();
-      } else if (newProps.children && !this.props.children) {
+      } else if (this.props.children && !prevProps.children) {
         this.initTether(newProps);
-      } else if (newProps.children) {
+      } else if (this.props.children) {
         this.tether.setOptions(import$({
           element: this.node,
           target: newProps.target()
         }, newProps.options));
-        render(newProps.children, this.node, function(){
+        render(this.props.children, this.node, function(){
           return this$.tether.position();
         });
       }

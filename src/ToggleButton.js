@@ -1,7 +1,8 @@
 (function(){
-  var React, createFactory, path, SvgWrapper, ToggleButton;
-  React = require('react'), createFactory = React.createFactory;
-  path = require('react-dom-factories').path;
+  var createFactory, React, path, SvgWrapper, ToggleButton;
+  createFactory = require('./utils').createFactory;
+  React = require('react');
+  path = createFactory('path');
   SvgWrapper = createFactory(require('./SvgWrapper'));
   module.exports = ToggleButton = (function(superclass){
     var prototype = extend$((import$(ToggleButton, superclass).displayName = 'ToggleButton', ToggleButton), superclass).prototype, constructor = ToggleButton;

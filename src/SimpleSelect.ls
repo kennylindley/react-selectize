@@ -1,12 +1,15 @@
 {all, any, drop, camelize, difference, filter, find, find-index, id, last, map, reject} = require \prelude-ls
 {is-equal-to-object} = require \prelude-extension
-{create-factory}:React = require \react
-{div, img, span} = require \react-dom-factories
+{create-factory} = require \./utils
+{create-ref}:React = require \react
+div = create-factory \div
+img = create-factory \img
+span = create-factory \span
+
 ReactSelectize = create-factory require \./ReactSelectize
 {cancel-event} = require \./utils
 
 module.exports = class SimpleSelect extends React.Component
-
     # get-default-props :: () -> Props
     @default-props =
         # autofocus :: Boolean
@@ -64,6 +67,7 @@ module.exports = class SimpleSelect extends React.Component
             scroll-lock: false
             search: ""
             value: @props?.default-value
+        @select-ref = create-ref!
 
 
     # render :: () -> ReactElement
@@ -114,7 +118,7 @@ module.exports = class SimpleSelect extends React.Component
             transition-leave
             transition-leave-timeout
 
-            ref: \select
+            ref: @select-ref
 
             # ANCHOR
             anchor: last values
@@ -358,17 +362,17 @@ module.exports = class SimpleSelect extends React.Component
     # fires the on-focus event after moving the cursor to the search input (with the reason = function-call)
     # fires the callback after the dropdown becomes visible
     # focus :: (() -> ()) -> ()
-    focus: !-> @refs.select.focus!
+    focus: !-> @select-ref.current.focus!
 
     # fires the on-blur event after closing the dropdown (with the reason = function-call)
     # blur :: Callback -> ()
-    blur: !-> @refs.select.blur!
+    blur: !-> @select-ref.current.blur!
 
     # highlight-the-first-selectable-option :: (() -> ()) -> ()
     highlight-first-selectable-option: (callback = (->)) !->
         if @state.open
             {options, value} = @get-computed-state!
-            @refs.select.highlight-and-scroll-to-selectable-option do 
+            @select-ref.current.highlight-and-scroll-to-selectable-option do 
                 @first-option-index-to-highlight options, value
                 1
                 callback

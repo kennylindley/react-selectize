@@ -45,19 +45,19 @@ class ReactTether extends React.PureComponent
             @init-tether @props
 
     # component-will-receive-props :: Props -> Void
-    component-will-receive-props: (new-props) !->
-        if @props.children and !new-props.children
+    component-did-update: (prev-props) !->
+        if prev-props.children and !@props.children
             @destroy-tether!
 
-        else if new-props.children and !@props.children
+        else if @props.children and !prev-props.children
             @init-tether new-props
 
-        else if new-props.children
+        else if @props.children
             @tether.set-options { 
                 element: @node
                 target: new-props.target!
             } <<< new-props.options
-            render new-props.children, @node, ~> @tether.position!
+            render @props.children, @node, ~> @tether.position!
 
     # component-will-unmount :: () -> Void
     component-will-unmount: !-> @destroy-tether!

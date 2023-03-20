@@ -1,8 +1,10 @@
 (function(){
-  var React, ref$, div, span, map, HighlightedText;
+  var React, map, createFactory, div, span, HighlightedText;
   React = require('react');
-  ref$ = require('react-dom-factories'), div = ref$.div, span = ref$.span;
   map = require('prelude-ls').map;
+  createFactory = require('./utils').createFactory;
+  div = createFactory('div');
+  span = createFactory('span');
   module.exports = HighlightedText = (function(superclass){
     var prototype = extend$((import$(HighlightedText, superclass).displayName = 'HighlightedText', HighlightedText), superclass).prototype, constructor = HighlightedText;
     HighlightedText.defaultProps = {

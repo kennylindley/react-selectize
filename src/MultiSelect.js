@@ -1,9 +1,12 @@
 (function(){
-  var ref$, all, any, camelize, difference, drop, filter, find, findIndex, id, last, map, reject, isEqualToObject, React, createFactory, div, img, span, ReactSelectize, cancelEvent, MultiSelect, toString$ = {}.toString;
+  var ref$, all, any, camelize, difference, drop, filter, find, findIndex, id, last, map, reject, isEqualToObject, createFactory, React, createRef, div, img, span, ReactSelectize, cancelEvent, MultiSelect, toString$ = {}.toString;
   ref$ = require('prelude-ls'), all = ref$.all, any = ref$.any, camelize = ref$.camelize, difference = ref$.difference, drop = ref$.drop, filter = ref$.filter, find = ref$.find, findIndex = ref$.findIndex, id = ref$.id, last = ref$.last, map = ref$.map, reject = ref$.reject;
   isEqualToObject = require('prelude-extension').isEqualToObject;
-  React = require('react'), createFactory = React.createFactory;
-  ref$ = require('react-dom-factories'), div = ref$.div, img = ref$.img, span = ref$.span;
+  createFactory = require('./utils').createFactory;
+  React = require('react'), createRef = React.createRef;
+  div = createFactory('div');
+  img = createFactory('img');
+  span = createFactory('span');
   ReactSelectize = createFactory(require('./ReactSelectize'));
   cancelEvent = require('./utils').cancelEvent;
   module.exports = MultiSelect = (function(superclass){
@@ -39,6 +42,7 @@
     };
     function MultiSelect(props){
       MultiSelect.superclass.call(this, props);
+      this.selectRef = createRef();
       this.state = {
         anchor: !!this.props.values ? last(this.props.values) : undefined,
         highlightedUid: undefined,
@@ -88,7 +92,7 @@
         transitionLeave: transitionLeave,
         transitionLeaveTimeout: transitionLeaveTimeout,
         uid: uid,
-        ref: 'select',
+        ref: this.selectRef,
         anchor: anchor,
         onAnchorChange: onAnchorChange,
         open: open,
@@ -303,14 +307,14 @@
       return this.props.firstOptionIndexToHighlight(optionIndexToHighlight, options, this.values(), search);
     };
     MultiSelect.prototype.focus = function(){
-      this.refs.select.focus();
+      this.selectRef.current.focus();
     };
     MultiSelect.prototype.blur = function(){
-      this.refs.select.blur();
+      this.selectRef.current.select.blur();
     };
     MultiSelect.prototype.highlightFirstSelectableOption = function(){
       if (this.state.open) {
-        this.refs.select.highlightAndScrollToSelectableOption(this.firstOptionIndexToHighlight(this.getComputedState().options), 1);
+        this.selectRef.current.highlightAndScrollToSelectableOption(this.firstOptionIndexToHighlight(this.getComputedState().options), 1);
       }
     };
     MultiSelect.prototype.values = function(){

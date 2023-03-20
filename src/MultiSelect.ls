@@ -1,13 +1,15 @@
 {all, any, camelize, difference, drop, filter, find, find-index, id, 
 last, map, reject} = require \prelude-ls
 {is-equal-to-object} = require \prelude-extension
-{create-factory}:React = require \react
-{div, img, span} = require \react-dom-factories
+{create-factory} = require \./utils
+{create-ref}:React = require \react
+div = create-factory \div
+img = create-factory \img
+span = create-factory \span
 ReactSelectize = create-factory require \./ReactSelectize 
 {cancel-event} = require \./utils
 
 module.exports = class MultiSelect extends React.Component
-
     # get-default-props :: () -> Props
     @default-props =
         # autofocus :: Boolean
@@ -54,6 +56,7 @@ module.exports = class MultiSelect extends React.Component
 
     (props) ->
         super(props)
+        @select-ref = create-ref!
         this.state = 
             anchor: if !!@props.values then last @props.values else undefined
             highlighted-uid: undefined
@@ -110,7 +113,7 @@ module.exports = class MultiSelect extends React.Component
             transition-leave
             transition-leave-timeout
             uid
-            ref: \select
+            ref: @select-ref
 
             # ANCHOR
             anchor
@@ -305,15 +308,15 @@ module.exports = class MultiSelect extends React.Component
         @props.first-option-index-to-highlight option-index-to-highlight, options, @values!, search
 
     # focus :: () -> ()
-    focus: !-> @refs.select.focus!
+    focus: !-> @select-ref.current.focus!
 
     # blur :: () -> ()
-    blur: !-> @refs.select.blur!
+    blur: !-> @select-ref.current.select.blur!
 
     # highlight-the-first-selectable-option :: () -> ()
     highlight-first-selectable-option: !->
         if @state.open
-            @refs.select.highlight-and-scroll-to-selectable-option do 
+            @select-ref.current.highlight-and-scroll-to-selectable-option do 
                 @first-option-index-to-highlight @get-computed-state!.options
                 1
 

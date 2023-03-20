@@ -1,9 +1,12 @@
 (function(){
-  var ref$, all, any, drop, camelize, difference, filter, find, findIndex, id, last, map, reject, isEqualToObject, React, createFactory, div, img, span, ReactSelectize, cancelEvent, SimpleSelect, toString$ = {}.toString;
+  var ref$, all, any, drop, camelize, difference, filter, find, findIndex, id, last, map, reject, isEqualToObject, createFactory, React, createRef, div, img, span, ReactSelectize, cancelEvent, SimpleSelect, toString$ = {}.toString;
   ref$ = require('prelude-ls'), all = ref$.all, any = ref$.any, drop = ref$.drop, camelize = ref$.camelize, difference = ref$.difference, filter = ref$.filter, find = ref$.find, findIndex = ref$.findIndex, id = ref$.id, last = ref$.last, map = ref$.map, reject = ref$.reject;
   isEqualToObject = require('prelude-extension').isEqualToObject;
-  React = require('react'), createFactory = React.createFactory;
-  ref$ = require('react-dom-factories'), div = ref$.div, img = ref$.img, span = ref$.span;
+  createFactory = require('./utils').createFactory;
+  React = require('react'), createRef = React.createRef;
+  div = createFactory('div');
+  img = createFactory('img');
+  span = createFactory('span');
   ReactSelectize = createFactory(require('./ReactSelectize'));
   cancelEvent = require('./utils').cancelEvent;
   module.exports = SimpleSelect = (function(superclass){
@@ -49,6 +52,7 @@
         search: "",
         value: (ref$ = this.props) != null ? ref$.defaultValue : void 8
       };
+      this.selectRef = createRef();
     }
     SimpleSelect.prototype.render = function(){
       var ref$, filteredOptions, highlightedUid, onHighlightedUidChange, onOpenChange, onSearchChange, onValueChange, open, options, search, value, values, autofocus, autosize, cancelKeyboardEventOnSelection, delimiters, disabled, dropdownDirection, groupId, groups, groupsAsColumns, hideResetButton, name, inputProps, onBlurResetsInput, renderToggleButton, renderGroupTitle, renderResetButton, serialize, tether, tetherProps, theme, transitionEnter, transitionLeave, transitionEnterTimeout, transitionLeaveTimeout, uid, this$ = this;
@@ -89,7 +93,7 @@
         transitionEnterTimeout: transitionEnterTimeout,
         transitionLeave: transitionLeave,
         transitionLeaveTimeout: transitionLeaveTimeout,
-        ref: 'select',
+        ref: this.selectRef,
         anchor: last(values),
         onAnchorChange: function(arg$, callback){
           return callback();
@@ -361,17 +365,17 @@
       return this.props.firstOptionIndexToHighlight(optionIndexToHighlight, options, value, search);
     };
     SimpleSelect.prototype.focus = function(){
-      this.refs.select.focus();
+      this.selectRef.current.focus();
     };
     SimpleSelect.prototype.blur = function(){
-      this.refs.select.blur();
+      this.selectRef.current.blur();
     };
     SimpleSelect.prototype.highlightFirstSelectableOption = function(callback){
       var ref$, options, value;
       callback == null && (callback = function(){});
       if (this.state.open) {
         ref$ = this.getComputedState(), options = ref$.options, value = ref$.value;
-        this.refs.select.highlightAndScrollToSelectableOption(this.firstOptionIndexToHighlight(options, value), 1, callback);
+        this.selectRef.current.highlightAndScrollToSelectableOption(this.firstOptionIndexToHighlight(options, value), 1, callback);
       } else {
         callback();
       }

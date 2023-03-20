@@ -6,6 +6,9 @@ ReactSelectize = require \../src/index.ls
 # React
 {create-element} = require \react
 {div, option, span} = require \react-dom-factories
+div = create-element \div
+option = create-element \option
+span = create-element \span
 create-react-class = require \create-react-class
 {find-DOM-node} = require \react-dom
 

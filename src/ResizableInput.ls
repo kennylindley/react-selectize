@@ -1,21 +1,26 @@
 {each, obj-to-pairs} = require \prelude-ls
-{create-factory}:React = require \react
-{input} = require \react-dom-factories
+{create-factory} = require \./utils
+{create-ref}:React = require \react
+input = create-factory \input
 {find-DOM-node} = require \react-dom
 
 module.exports = class ResizableInput extends React.PureComponent
+    (props) ->
+        super(props)
+        @input-ref = create-ref!
 
     # render :: () -> ReactElement
     render: ->
         input {} <<< @props <<< 
             type: \input
             class-name: \resizable-input
+            ref: @input-ref
 
     # autosize :: () -> ()
     autosize: ->
 
         # reset the width
-        input-element = (find-DOM-node @)
+        input-element = @input-ref.current
             ..style.width = \0px
 
         if input-element.value.length == 0

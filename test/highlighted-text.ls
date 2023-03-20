@@ -4,7 +4,9 @@ require! \../src/HighlightedText
 
 # React
 {create-element} = require \react
-{div, option, span} = require \react-dom-factories
+div = create-element \div
+option = create-element \option
+span = create-element \span
 {find-DOM-node} = require \react-dom
 
 # TestUtils

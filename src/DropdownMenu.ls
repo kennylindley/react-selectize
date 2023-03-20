@@ -2,8 +2,11 @@
 {filter, id, map} = require \prelude-ls
 
 {is-equal-to-object} = require \prelude-extension
-{create-factory}:React = require \react
-{div, input, span} = require \react-dom-factories
+{create-factory} = require \./utils
+{create-ref}:React = require \react
+div = create-factory \div
+input = create-factory \input
+span = create-factory \span
 {find-DOM-node} = require \react-dom
 ReactCSSTransitionGroup = create-factory require \react-transition-group/CSSTransition
 ReactTether = create-factory require \./ReactTether
@@ -12,7 +15,6 @@ OptionWrapper = create-factory require \./OptionWrapper
 {cancel-event, class-name-from-object} = require \./utils
 
 module.exports = class DropdownMenu extends React.PureComponent
-
     # get-default-props :: () -> Props
     @default-props =
         # bottom-anchor :: () -> ReactElement
@@ -58,6 +60,11 @@ module.exports = class DropdownMenu extends React.PureComponent
         transition-leave-timeout: 200
         uid: id # (Eq e) => Item -> e
 
+    (props) ->
+        super(props)
+        @dropdown-menu-wrapper-ref = create-ref!
+        
+
     # render :: () -> ReactElement
     render: ->
         dynamic-class-name = class-name-from-object do
@@ -85,7 +92,7 @@ module.exports = class DropdownMenu extends React.PureComponent
     render-animated-dropdown: ({dynamic-class-name}:computed-state) ->
         if !!@props.transition-enter or !!@props.transition-leave
             ReactCSSTransitionGroup do 
-                ref: \dropdownMenuWrapper
+                ref: @dropdown-menu-wrapper-ref
                 component: \div
                 transition-name: \custom 
                 transition-enter: @props.transition-enter
@@ -98,7 +105,7 @@ module.exports = class DropdownMenu extends React.PureComponent
         else
             @render-dropdown computed-state
 
-    # render-options :: [Item] -> [ReactEleent]
+    # render-options :: [Item] -> [ReactElement]
     render-options: (options) ->
         [0 til options.length] |> map (index) ~>
             option = options[index]
@@ -147,8 +154,8 @@ module.exports = class DropdownMenu extends React.PureComponent
 
                 # on-height-change :: Number -> ()
                 on-height-change: (height) !~> 
-                    if @refs.dropdown-menu-wrapper
-                        find-DOM-node @refs.dropdown-menu-wrapper .style.height = "#{height}px"
+                    if @dropdown-menu-wrapper-ref.current
+                        @dropdown-menu-wrapper-ref.current.style.height = "#{height}px"
 
                 # NO RESULT FOUND   
                 if @props.options.length == 0
@@ -188,7 +195,7 @@ module.exports = class DropdownMenu extends React.PureComponent
     # component-did-update :: () -> ()
     component-did-update: (prev-props) !->
         if prev-props.dropdown-direction !== @props.dropdown-direction and @props.open
-            dropdown-menu = find-DOM-node @refs.dropdown-menu-wrapper ? @dropdown-menu
+            dropdown-menu = @dropdown-menu-wrapper-ref.current ? @dropdown-menu
                 ..?.style.bottom = switch 
                     | @props.dropdown-direction == -1 => 
                         "#{@props.bottom-anchor!.offset-height + dropdown-menu.style.margin-bottom}px"

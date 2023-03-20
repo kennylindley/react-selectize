@@ -1,7 +1,8 @@
 (function(){
-  var React, div, isEqualToObject, ValueWrapper;
+  var React, createFactory, div, isEqualToObject, ValueWrapper;
   React = require('react');
-  div = require('react-dom-factories').div;
+  createFactory = require('./utils').createFactory;
+  div = createFactory('div');
   isEqualToObject = require('prelude-extension').isEqualToObject;
   module.exports = ValueWrapper = (function(superclass){
     var prototype = extend$((import$(ValueWrapper, superclass).displayName = 'ValueWrapper', ValueWrapper), superclass).prototype, constructor = ValueWrapper;

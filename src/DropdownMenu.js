@@ -1,11 +1,14 @@
 (function(){
-  var ref$, filter, id, map, isEqualToObject, React, createFactory, div, input, span, findDOMNode, ReactCSSTransitionGroup, ReactTether, DivWrapper, OptionWrapper, cancelEvent, classNameFromObject, DropdownMenu;
+  var ref$, filter, id, map, isEqualToObject, createFactory, React, createRef, div, input, span, findDOMNode, ReactCSSTransitionGroup, ReactTether, DivWrapper, OptionWrapper, cancelEvent, classNameFromObject, DropdownMenu;
   ref$ = require('prelude-ls'), filter = ref$.filter, id = ref$.id, map = ref$.map;
   isEqualToObject = require('prelude-extension').isEqualToObject;
-  React = require('react'), createFactory = React.createFactory;
-  ref$ = require('react-dom-factories'), div = ref$.div, input = ref$.input, span = ref$.span;
+  createFactory = require('./utils').createFactory;
+  React = require('react'), createRef = React.createRef;
+  div = createFactory('div');
+  input = createFactory('input');
+  span = createFactory('span');
   findDOMNode = require('react-dom').findDOMNode;
-  ReactCSSTransitionGroup = createFactory(require('react-transition-group/CSSTransition'));
+  ReactCSSTransitionGroup = createFactory(require('react-transition-group/CSSTransitionGroup'));
   ReactTether = createFactory(require('./ReactTether'));
   DivWrapper = createFactory(require('./DivWrapper'));
   OptionWrapper = createFactory(require('./OptionWrapper'));
@@ -60,6 +63,10 @@
       transitionLeaveTimeout: 200,
       uid: id
     };
+    function DropdownMenu(props){
+      DropdownMenu.superclass.call(this, props);
+      this.dropdownMenuWrapperRef = createRef();
+    }
     DropdownMenu.prototype.render = function(){
       var dynamicClassName, ref$;
       dynamicClassName = classNameFromObject((ref$ = {}, ref$[this.props.theme + ""] = 1, ref$[this.props.className + ""] = 1, ref$.flipped = this.props.dropdownDirection === -1, ref$.tethered = this.props.tether, ref$));
@@ -84,7 +91,7 @@
       dynamicClassName = computedState.dynamicClassName;
       if (!!this.props.transitionEnter || !!this.props.transitionLeave) {
         return ReactCSSTransitionGroup({
-          ref: 'dropdownMenuWrapper',
+          ref: this.dropdownMenuWrapperRef,
           component: 'div',
           transitionName: 'custom',
           transitionEnter: this.props.transitionEnter,
@@ -171,8 +178,8 @@
             !!element && (this$.dropdownMenu = element);
           },
           onHeightChange: function(height){
-            if (this$.refs.dropdownMenuWrapper) {
-              findDOMNode(this$.refs.dropdownMenuWrapper).style.height = height + "px";
+            if (this$.dropdownMenuWrapperRef.current) {
+              this$.dropdownMenuWrapperRef.current.style.height = height + "px";
             }
           }
         }, this.props.options.length === 0
@@ -220,9 +227,9 @@
     DropdownMenu.prototype.componentDidUpdate = function(prevProps){
       var x$, dropdownMenu, ref$;
       if (!deepEq$(prevProps.dropdownDirection, this.props.dropdownDirection, '===') && this.props.open) {
-        x$ = dropdownMenu = findDOMNode((ref$ = this.refs.dropdownMenuWrapper) != null
+        x$ = dropdownMenu = (ref$ = this.dropdownMenuWrapperRef.current) != null
           ? ref$
-          : this.dropdownMenu);
+          : this.dropdownMenu;
         if (x$ != null) {
           x$.style.bottom = (function(){
             switch (false) {
@@ -277,9 +284,6 @@
     DropdownMenu.prototype.uidToString = function(uid){
       return (typeof uid === 'object' ? JSON.stringify : id)(uid);
     };
-    function DropdownMenu(){
-      DropdownMenu.superclass.apply(this, arguments);
-    }
     return DropdownMenu;
   }(React.PureComponent));
   function extend$(sub, sup){

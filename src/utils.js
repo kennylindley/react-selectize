@@ -1,6 +1,7 @@
 (function(){
-  var ref$, filter, map, objToPairs, Str, cancelEvent, classNameFromObject, out$ = typeof exports != 'undefined' && exports || this;
+  var ref$, filter, map, objToPairs, Str, createElement, cancelEvent, classNameFromObject, createFactory, out$ = typeof exports != 'undefined' && exports || this;
   ref$ = require('prelude-ls'), filter = ref$.filter, map = ref$.map, objToPairs = ref$.objToPairs, Str = ref$.Str;
+  createElement = require('react').createElement;
   out$.cancelEvent = cancelEvent = function(e){
     e.preventDefault();
     e.stopPropagation();
@@ -16,5 +17,8 @@
     })(
     objToPairs(
     it))));
+  };
+  out$.createFactory = createFactory = function(type){
+    return createElement.bind(null, type);
   };
 }).call(this);

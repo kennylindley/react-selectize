@@ -3,8 +3,8 @@ rough
 config.ls
 npm-debug.log
 *.sublime-workspace
+*.css
 *.rdb
 coverage/
 dist/
 node_modules/
-public/

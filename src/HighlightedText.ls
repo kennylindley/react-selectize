@@ -1,7 +1,8 @@
 React = require \react
-{div, span} = require \react-dom-factories
 {map} = require \prelude-ls
-
+{create-factory} = require \./utils
+div = create-factory \div
+span = create-factory \span
 module.exports = class HighlightedText extends React.Component
 
     # get-default-props :: a -> Props

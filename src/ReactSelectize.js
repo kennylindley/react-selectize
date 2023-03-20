@@ -1,9 +1,14 @@
 (function(){
-  var ref$, each, filter, find, findIndex, id, initial, last, map, objToPairs, partition, reject, reverse, Str, sortBy, sum, values, clamp, isEqualToObject, React, createFactory, div, input, path, span, svg, findDOMNode, ToggleButton, DropdownMenu, OptionWrapper, ValueWrapper, ResetButton, ResizableInput, cancelEvent, classNameFromObject, ReactSelectize;
+  var ref$, each, filter, find, findIndex, id, initial, last, map, objToPairs, partition, reject, reverse, Str, sortBy, sum, values, clamp, isEqualToObject, createFactory, React, createRef, div, input, path, span, svg, findDOMNode, ToggleButton, DropdownMenu, OptionWrapper, ValueWrapper, ResetButton, ResizableInput, cancelEvent, classNameFromObject, ReactSelectize;
   ref$ = require('prelude-ls'), each = ref$.each, filter = ref$.filter, find = ref$.find, findIndex = ref$.findIndex, id = ref$.id, initial = ref$.initial, last = ref$.last, map = ref$.map, objToPairs = ref$.objToPairs, partition = ref$.partition, reject = ref$.reject, reverse = ref$.reverse, Str = ref$.Str, sortBy = ref$.sortBy, sum = ref$.sum, values = ref$.values;
   ref$ = require('prelude-extension'), clamp = ref$.clamp, isEqualToObject = ref$.isEqualToObject;
-  React = require('react'), createFactory = React.createFactory;
-  ref$ = require('react-dom-factories'), div = ref$.div, input = ref$.input, path = ref$.path, span = ref$.span, svg = ref$.svg;
+  createFactory = require('./utils').createFactory;
+  React = require('react'), createRef = React.createRef;
+  div = createFactory('div');
+  input = createFactory('input');
+  path = createFactory('path');
+  span = createFactory('span');
+  svg = createFactory('svg');
   findDOMNode = require('react-dom').findDOMNode;
   ToggleButton = createFactory(require('./ToggleButton'));
   DropdownMenu = createFactory(require('./DropdownMenu'));
@@ -62,6 +67,12 @@
       uid: id,
       values: []
     };
+    function ReactSelectize(props){
+      ReactSelectize.superclass.call(this, props);
+      this.controlRef = createRef();
+      this.dropdownRef = createRef();
+      this.searchRef = createRef();
+    }
     ReactSelectize.prototype.render = function(){
       var anchorIndex, renderSelectedValues, flipped, ref$, ref1$, this$ = this;
       anchorIndex = (function(){
@@ -103,7 +114,7 @@
         value: this.props.serialize(this.props.values)
       }) : void 8, div({
         className: 'react-selectize-control',
-        ref: 'control',
+        ref: this.controlRef,
         onMouseDown: function(e){
           (function(){
             return this$.props.onAnchorChange(last(this$.props.values), function(){
@@ -126,7 +137,7 @@
         return results$;
       }())), ResizableInput((ref$ = import$({
         disabled: this.props.disabled
-      }, this.props.inputProps), ref$.ref = 'search', ref$.type = 'text', ref$.value = this.props.search, ref$.onChange = function(arg$){
+      }, this.props.inputProps), ref$.ref = this.searchRef, ref$.type = 'text', ref$.value = this.props.search, ref$.onChange = function(arg$){
         var value;
         value = arg$.currentTarget.value;
         return this$.props.onSearchChange(value, function(){
@@ -147,7 +158,7 @@
           return this$.props.onFocus(e);
         });
       }, ref$.onBlur = function(e){
-        if (this$.refs.dropdownMenu && document.activeElement === findDOMNode(this$.refs.dropdownMenu)) {
+        if (this$.dropdownRef.current && document.activeElement === this$.dropdownRef.current) {
           return;
         }
         return this$.closeDropdown(function(){
@@ -190,12 +201,12 @@
       }, this.props.renderToggleButton({
         open: this.props.open,
         flipped: flipped
-      }))), DropdownMenu((ref$ = import$({}, this.props), ref$.ref = 'dropdownMenu', ref$.className = classNameFromObject((ref1$ = {
+      }))), DropdownMenu((ref$ = import$({}, this.props), ref$.ref = this.dropdownRef, ref$.className = classNameFromObject((ref1$ = {
         'react-selectize': 1
       }, ref1$[this.props.className + ""] = 1, ref1$)), ref$.theme = this.props.theme, ref$.scrollLock = this.props.scrollLock, ref$.onScrollChange = this.props.onScrollChange, ref$.bottomAnchor = function(){
-        return findDOMNode(this$.refs.control);
+        return this$.controlRef.current;
       }, ref$.tetherProps = (ref1$ = import$({}, this.props.tetherProps), ref1$.target = function(){
-        return findDOMNode(this$.refs.control);
+        return this$.controlRef.current;
       }, ref1$), ref$.highlightedUid = this.props.highlightedUid, ref$.onHighlightedUidChange = this.props.onHighlightedUidChange, ref$.onOptionClick = function(highlightedUid){
         this$.selectHighlightedUid(anchorIndex, function(){});
       }, ref$)));
@@ -335,16 +346,14 @@
       }
     };
     ReactSelectize.prototype.componentDidUpdate = function(prevProps){
+      if ((typeof prevProps.disabled === 'undefined' || prevProps.disabled === false) && (typeof this.props.disabled !== 'undefined' && this.props.disabled === true)) {
+        this.onOpenChange(false, function(){});
+      }
       if (this.props.open && !prevProps.open && this.props.highlightedUid === undefined) {
         this.highlightAndFocus();
       }
       if (!this.props.open && prevProps.open) {
         this.props.onHighlightedUidChange(undefined, function(){});
-      }
-    };
-    ReactSelectize.prototype.componentWillReceiveProps = function(props){
-      if ((typeof this.props.disabled === 'undefined' || this.props.disabled === false) && (typeof props.disabled !== 'undefined' && props.disabled === true)) {
-        this.onOpenChange(false, function(){});
       }
     };
     ReactSelectize.prototype.optionIndexFromUid = function(uid){
@@ -361,14 +370,14 @@
       });
     };
     ReactSelectize.prototype.blur = function(){
-      this.refs.search.blur();
+      this.searchRef.current.blur();
     };
     ReactSelectize.prototype.focus = function(){
-      this.refs.search.focus();
+      this.searchRef.current.focus();
     };
     ReactSelectize.prototype.focusOnInput = function(){
       var input;
-      input = findDOMNode(this.refs.search);
+      input = this.searchRef.current;
       if (input !== document.activeElement) {
         this.focusLock = true;
         input.focus();
@@ -381,7 +390,7 @@
     };
     ReactSelectize.prototype.highlightAndScrollToOption = function(index, callback){
       callback == null && (callback = function(){});
-      this.refs.dropdownMenu.highlightAndScrollToOption(index, callback);
+      this.dropdownRef.current.highlightAndScrollToOption(index, callback);
     };
     ReactSelectize.prototype.highlightAndScrollToSelectableOption = function(index, direction, callback){
       var this$ = this;
@@ -397,7 +406,7 @@
           };
         }
       })()(function(){
-        return this$.refs.dropdownMenu.highlightAndScrollToSelectableOption(index, direction, callback);
+        return this$.dropdownRef.current.highlightAndScrollToSelectableOption(index, direction, callback);
       });
     };
     ReactSelectize.prototype.isEqualToObject = function(){
@@ -474,9 +483,6 @@
     ReactSelectize.prototype.uidToString = function(uid){
       return (typeof uid === 'object' ? JSON.stringify : id)(uid);
     };
-    function ReactSelectize(){
-      ReactSelectize.superclass.apply(this, arguments);
-    }
     return ReactSelectize;
   }(React.Component));
   function extend$(sub, sup){

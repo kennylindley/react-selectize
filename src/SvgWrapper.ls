@@ -1,5 +1,6 @@
 React = require \react
-{svg} = require \react-dom-factories
+{create-factory} = require \./utils
+svg = create-factory \svg
 {find-DOM-node} = require \react-dom
 
 # set the focusable attribute to false, this prevents having to press the tab key multiple times in IE

@@ -4,7 +4,10 @@ require! \assert
 
 # React
 {create-element} = require \react
-{div, input, option, span} = require \react-dom-factories
+div = create-element \div
+input = create-element \input
+option = create-element \option
+span = create-element \span
 {find-DOM-node, render, unmount-component-at-node} = require \react-dom
 
 # TestUtils

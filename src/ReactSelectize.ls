@@ -3,9 +3,13 @@
 partition, reject, reverse, Str, sort-by, sum, values} = require \prelude-ls
 
 {clamp, is-equal-to-object} = require \prelude-extension
-{create-factory}:React = require \react
-{div, input, path, span, svg} = require \react-dom-factories
-{find-DOM-node} = require \react-dom
+{create-factory} = require \./utils
+{create-ref}:React = require \react
+div = create-factory \div
+input = create-factory \input
+path = create-factory \path
+span = create-factory \span
+svg = create-factory \svg
 ToggleButton = create-factory require \./ToggleButton
 DropdownMenu = create-factory require \./DropdownMenu
 OptionWrapper = create-factory require \./OptionWrapper
@@ -83,6 +87,12 @@ module.exports = class ReactSelectize extends React.Component
         uid: id # (Eq e) => Item -> e
         values: [] # [Item]
 
+    (props) ->
+        super(props)
+        @control-ref = create-ref!
+        @dropdown-ref = create-ref!
+        @search-ref = create-ref!
+        
     # render :: () -> ReactElement
     render: ->
         anchor-index = 
@@ -127,7 +137,7 @@ module.exports = class ReactSelectize extends React.Component
             # CONTROL
             div do 
                 class-name: \react-selectize-control
-                ref: \control
+                ref: @control-ref
 
                 # using click would cause a flicker because:
                 # 1: on mouse down, the focus will blur from the search field causing the dropdown menu to close
@@ -157,7 +167,7 @@ module.exports = class ReactSelectize extends React.Component
                     # SEARCH INPUT BOX
                     ResizableInput do
                         {disabled: @props.disabled} <<< @props.input-props <<< {
-                            ref: \search
+                            ref: @search-ref
                             type: \text
                             value: @props.search
 
@@ -185,7 +195,7 @@ module.exports = class ReactSelectize extends React.Component
 
                             on-blur: (e) ~>
                                 # to prevent closing the dropdown when the user tries to click & drag the scrollbar in IE
-                                return if @refs.dropdown-menu and document.active-element == (find-DOM-node @refs.dropdown-menu)
+                                return if @dropdown-ref.current and document.active-element == @dropdown-ref.current
 
                                 <~ @close-dropdown
 
@@ -232,7 +242,7 @@ module.exports = class ReactSelectize extends React.Component
         
             # (TETHERED / ANIMATED / SIMPLE) DROPDOWN
             DropdownMenu {} <<< @props <<< 
-                ref: \dropdownMenu
+                ref: @dropdown-ref
                 class-name: class-name-from-object do
                     \react-selectize : 1
                     "#{@props.class-name}" : 1
@@ -245,13 +255,13 @@ module.exports = class ReactSelectize extends React.Component
 
                 # used when dropdown-direction is -1
                 # bottom-anchor :: () -> ReactElement
-                bottom-anchor: ~> find-DOM-node @refs.control
+                bottom-anchor: ~> @control-ref.current
 
                 tether-props: {} <<< @props.tether-props <<< 
 
                     # used when @props.tether is true
                     # target :: () -> ReactElement
-                    target: ~> find-DOM-node @refs.control
+                    target: ~> @control-ref.current
 
                 # uid of the highlighted option, this changes whenever the user hovers over an option
                 # or uses arrow keys to navigate the list of options
@@ -402,6 +412,9 @@ module.exports = class ReactSelectize extends React.Component
 
     # component-did-update :: Props -> UIState -> ()
     component-did-update: (prev-props) !->
+        if (typeof prev-props.disabled == \undefined or prev-props.disabled == false) and
+           (typeof @props.disabled != \undefined and @props.disabled == true)
+           @on-open-change false, ~>
 
         # if the list of options opened then highlight the first option & focus on the search input
         if @props.open and !prev-props.open and @props.highlighted-uid == undefined
@@ -410,12 +423,6 @@ module.exports = class ReactSelectize extends React.Component
         # if the list of options was closed then reset highlighted-uid 
         if !@props.open and prev-props.open
             <~ @props.on-highlighted-uid-change undefined
-
-    # component-will-receive-props :: Props -> ()
-    component-will-receive-props: (props) !->
-        if (typeof @props.disabled == \undefined or @props.disabled == false) and 
-           (typeof props.disabled != \undefined and props.disabled == true)
-           @on-open-change false, ~>
 
     # option-index-from-uid :: (Eq e) => e -> Int
     option-index-from-uid: (uid) -> @props.options |> find-index ~> uid `is-equal-to-object` @props.uid it
@@ -428,15 +435,15 @@ module.exports = class ReactSelectize extends React.Component
             callback
 
     # blur :: () -> ()
-    blur: !-> @refs.search.blur!
+    blur: !-> @search-ref.current.blur!
 
     # focus :: () -> ()
-    focus: !-> @refs.search.focus!
+    focus: !-> @search-ref.current.focus!
 
     # move the cursor to the input field, without toggling the dropdown
     # focus-on-input :: () -> ()
     focus-on-input: !->
-        input = find-DOM-node @refs.search
+        input = @search-ref.current
         if input != document.active-element
             @focus-lock = true
 
@@ -457,14 +464,14 @@ module.exports = class ReactSelectize extends React.Component
 
     # highlight-and-scroll-to-option :: Int, (() -> ())? -> ()
     highlight-and-scroll-to-option: (index, callback = (->)) !->
-        @refs.dropdown-menu.highlight-and-scroll-to-option index, callback
+        @dropdown-ref.current.highlight-and-scroll-to-option index, callback
 
     # highlight-and-scroll-to-selectable-option :: Int, Int, (Boolean -> ())? -> ()
     highlight-and-scroll-to-selectable-option: (index, direction, callback = (->)) !->
 
         # open dropdown menu
         <~ do ~> if !@props.open then (~> @on-open-change true, it) else (-> it!)
-        @refs.dropdown-menu.highlight-and-scroll-to-selectable-option index, direction, callback
+        @dropdown-ref.current.highlight-and-scroll-to-selectable-option index, direction, callback
 
     # is-equal-to-object :: Item -> Item -> Boolean
     is-equal-to-object: --> (@props.uid &0) `is-equal-to-object` @props.uid &1
