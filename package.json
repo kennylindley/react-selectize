@@ -1,5 +1,5 @@
 {
-  "name": "@simplymadeapps/react-selectize",
+  "name": "@simplymadeapps/selectize",
   "version": "4.0.0",
   "description": "A Stateless & Flexible Select component for React inspired by Selectize",
   "main": "src/index.js",
